@@ -1,16 +1,32 @@
 //Crea una funcion procesarArray que realice los siguientes pasos:
 //1)Checkea que todos los elementos son de tipo número. Si no, termina con alert ("Error")
-let array =["hola", 55, 20, 66, 9];
-function procesarArray(array){
-    let resultado = array.every(element => typeof element === 'number');
-    if(!resultado){
-        alert("Error");
-        return;
-    }
-
-}
-procesarArray(array);
-
 //En caso afirmativo, modifica el valor del array multiplicando cada elemento por 2
 //se debe almacenar sobre el mismo array
+//Por ultimo comprueba que todos los elementos son pares. Si es así, muestra un mensaje por pantalla
+//de éxito, en caso contrario de error
+let array =[2, 58, 20, 66, 94];
+
+function procesarArray(array){
+    let error = false;
+    for(let i = 0; i<array.length; i++){
+        if(typeof array[i] != 'number'){
+            alert('Error');
+           return;
+        }
+    }
+    for(let i = 0; i<array.length; i++){
+        array[i] *=2;
+    }
+    for(let i = 0; i<array.length; i++){
+        if(array[i] % 2 != 0){
+            alert('Error');
+            return;
+        }
+    }
+
+    alert('Éxito');
+}
+
+procesarArray(array);
+
 
