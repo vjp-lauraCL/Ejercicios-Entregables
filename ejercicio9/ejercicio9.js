@@ -10,9 +10,28 @@ class PlatoCocina{
         this.duracion = duracion;
         this.dificultad = dificultad;
     }
+    toString(){
+        return `${this.nombrePlato} ${this.duracion} ${this.dificultad}`;
+    }
 }
 
 //Creamos los tres platos de la clase PlatoCocina. 
 let plato1 = new PlatoCocina('Pollo al curry', 30, 3);
 let plato2 = new PlatoCocina('Pescado con verduras', 20, 4);
 let plato3 = new PlatoCocina('Huevo frito con patatas', 30, 2);
+
+//Creamos un mapa que almacenará los platos y los ingredientes de cada plato.
+let platos = new Map();
+platos.set(plato1, ['pollo', 'curry', 'arroz']);
+platos.set(plato2, ['pescado', 'zanahoria', 'cebolla', 'patatas']);
+platos.set(plato3, ['huevos', 'patatas']);
+
+//Creamos la función que pintará el mapa (platos-> ingredientes)
+//Utilizamos join para unir todos los elementos del array de ingredientes
+function pintarMapa() {
+    for (let [plato, ingredientes] of platos) {
+        console.log(`${plato.nombrePlato} -> ${ingredientes.join(', ')}`);
+    }
+}
+
+pintarMapa();
