@@ -1,92 +1,103 @@
 let palos = ["corazones", "picas", "tréboles", "diamantes"];
 let valores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jota", "Reina", "Rey"];
 let baraja = [];
-let jugada = false; //Comprueba si estamos jugando o la partida ha terminado
+let jugada = false; // Comprueba si estamos jugando o la partida ha terminado
 let cartasUsadas = 0;
-let totalJugador=0;
+let totalJugador = 0;
 let totalMaquina = 0;
 
-
-//Barajamos la baraja de forma ordenada
-
-function generarBaraja(){
-   for(i = 1; i<=100;i++){
-    let unaCarta = Math.floor(52*Math.random());
-    let otraCarta = Math.floor(52*Math.random());
-    let barajada={};
-    barajada =baraja[unaCarta];
-    baraja[unaCarta]=baraja[otraCarta];
-    baraja[otraCarta]=barajada;
-   }
-   return baraja;
+// Generar la baraja de cartas
+function generarBaraja() {
+    for (let palo of palos) {
+        for (let valor of valores) {
+            baraja.push({ palo: palo, valor: valor });
+        }
+    }
 }
-function blackjack(){
-     jugada = true;
-     generarBaraja();
-     console.log("El juego del Blackjack");
-     for(let i=0; i<52; i++){
-        console.log(baraja[i]);
-     }
-     let manoJugador = baraja[0];
-     manoJugador = baraja[1];
-     let cartasUsadas = 2;
-     console.log("Tus cartas son:" + manoJugador[0]+ " " + manoJugador[1]);
-     finalBlackjack();
-     if(jugada){
-        if(totalJugador <17){
+
+// Barajar la baraja de forma aleatoria
+function barajar() {
+    for (let i = 0; i < 100; i++) {
+        let unaCarta = Math.floor(52 * Math.random());
+        let otraCarta = Math.floor(52 * Math.random());
+        let temp = baraja[unaCarta];
+        baraja[unaCarta] = baraja[otraCarta];
+        baraja[otraCarta] = temp;
+    }
+}
+
+function blackjack() {
+    jugada = true;
+    generarBaraja();
+    barajar();
+    console.log("El juego del Blackjack");
+
+    let manoJugador = [baraja[0], baraja[1]];
+    cartasUsadas = 2;
+    totalJugador = puntuacion(manoJugador);
+    console.log("Tus cartas son: " + manoJugador[0].valor + " de " + manoJugador[0].palo + " y " + manoJugador[1].valor + " de " + manoJugador[1].palo);
+
+    finalBlackjack();
+    if (jugada) {
+        if (totalJugador < 17) {
             console.log("¿Quieres una carta?");
         }
-        while(totalJugador < 17){
+        while (totalJugador < 17) {
+            manoJugador.push(baraja[cartasUsadas]);
             cartasUsadas++;
-            manoJugador[cartasUsadas -1] = baraja[cartasUsadas -1];
-            totalJugador=puntuar(manoJugador);
-            //función final
+            totalJugador = puntuacion(manoJugador);
         }
-        if(totalJugador > 21){
+        if (totalJugador > 21) {
             console.log("Te has pasado de 21, has perdido");
-        }
-     }
-     if(jugada){
-        let manoMaquina =0;
-        console.log("Turno de la máquina");
-        cartasUsadas+=1;
-        manoMaquina[0]= baraja[cartasUsadas -1];
-        cartasUsadas+=1;
-        manoMaquina[1]= baraja[cartasUsadas -1];
-        console.log("La máquina tiene: " + manoMaquina[0] + " " + manoMaquina[1]);
-
-        if(totalMaquina < 17){
-            while(totalMaquina < 17){
-               console.log("La máquina ha pedido otra carta");
-            }
-        }else if(totalMaquina > 21){
-            console.log("La máquina tiene más de 21, has ganado")
-        }
-     }
-}
-function puntuacion(mano){
-    let valorCarta = 0;
-    let puntosCarta = 0;
-    let ases = false;
-    for(let i =0; i<mano.length; i++){
-        valorCarta =mano[i].valorCarta;
-        if(valorCarta === "Jota" || valorCarta === "Reina" || valorCarta === "Rey"){
-            puntosCarta = 10;
-        }
-        else if(valorCarta === "As"){
-            puntosCarta = 1;
-            ases = true;
-}
-    if(ases && puntosCarta + 10 <= 21){
-        puntosCarta += 10;
-    }
-    return puntosCarta;
-}
-}
-
-    function finalBlackjack(){
-        if(totalJugador === 21){
             jugada = false;
+        }
+    }
+
+    if (jugada) {
+        let manoMaquina = [baraja[cartasUsadas], baraja[cartasUsadas + 1]];
+        cartasUsadas += 2;
+        totalMaquina = puntuacion(manoMaquina);
+        console.log("La máquina tiene: " + manoMaquina[0].valor + " de " + manoMaquina[0].palo + " y " + manoMaquina[1].valor + " de " + manoMaquina[1].palo);
+
+        while (totalMaquina < 17) {
+            manoMaquina.push(baraja[cartasUsadas]);
+            cartasUsadas++;
+            totalMaquina = puntuacion(manoMaquina);
+            console.log("La máquina ha pedido otra carta");
+        }
+        if (totalMaquina > 21) {
+            console.log("La máquina tiene más de 21, has ganado");
+        } else if (totalMaquina >= totalJugador) {
+            console.log("La máquina ha ganado");
+        } else {
             console.log("Has ganado");
         }
     }
+}
+
+function puntuacion(mano) {
+    let puntos = 0;
+    let ases = 0;
+    for (let carta of mano) {
+        if (typeof carta.valor === "number") {
+            puntos += carta.valor;
+        } else if (carta.valor === "Jota" || carta.valor === "Reina" || carta.valor === "Rey") {
+            puntos += 10;
+        } else if (carta.valor === "As") {
+            puntos += 1;
+            ases++;
+        }
+    }
+    while (ases > 0 && puntos + 10 <= 21) {
+        puntos += 10;
+        ases--;
+    }
+    return puntos;
+}
+
+function finalBlackjack() {
+    if (totalJugador === 21) {
+        jugada = false;
+        console.log("Has ganado");
+    }
+}
